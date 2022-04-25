@@ -1,0 +1,145 @@
+---
+title: "An Introduction to listr"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{An Introduction to listr}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(listr)
+```
+
+The idea behind the `listr` package is to make working with lists with in R 
+a bit more convenient. 
+There is nothing wrong with lists in R per se, but sometimes the tools 
+around lists and the syntax can be a bit confusing and complicated. 
+With the tools provided by `listr` common tasks with lists and especially 
+lists containing data frames can hopefully be simplified by providing a 
+consistent and easy to read syntax that is also suited for use with pipes. 
+
+For our examples below, assume we split the `mtcars` 
+data by the `cyl` variable. 
+
+```{r}
+by_cyl <- split(mtcars, mtcars$cyl)
+```
+
+
+## Basic operations
+
+```{r}
+by_cyl <- by_cyl |> 
+  list_rename("cyl4" = `4`, "cyl6" = `6`, "cyl8" = `8`)
+```
+
+
+```{r}
+by_cyl |> list_select(cyl6)
+```
+
+There is both `list_extract` and `list_select` that can appear a bit similar 
+in some cases. 
+However, there are some important distinctions between both:
+
+* `list_select` allows you to select several items from a list.
+* `list_select` always returns a list.
+
+In contrast
+
+* `list_extract` only allows you to select a single item.
+* `list_extract` unlists the selected item.
+
+Thus, `list_select` is equivalent to selecting from a list with a single 
+square bracket, while `list_extract` is equivalent to using double square 
+brackets. 
+
+```{r}
+by_cyl |> list_select(1, 2)
+```
+
+```{r}
+cyl4 <- by_cyl |> list_extract(cyl4)
+cyl4
+```
+
+The `list_remove` function is straightforward.
+
+```{r}
+by_cyl <- by_cyl |> list_remove(cyl4)
+by_cyl
+```
+
+The opposite can be achieved with `list_insert` and its more specialised
+versions `list_append` and `list_prepend`. 
+
+```{r}
+by_cyl <- by_cyl |> list_prepend(cyl4, name = "cyl4")
+by_cyl
+```
+
+
+## Operations with data frames
+There is a certain focus on operations with data frames in this package. 
+
+The function `list_name_to_df` adds a column to each data frame in the list
+containing the name of the list item.
+This is particularly useful if you have a list where each item is data from 
+an experimental group or something similar.
+
+```{r}
+by_cyl |> 
+  list_name_to_df() |> 
+  list_select(1)
+```
+
+Using `list_bind` you can bind together data frame elements of a list. 
+This is roughly similar to calling `do.call(rbind, list)` or the same with 
+`cbind`, but there is a bit more flexibility. 
+
+```{r}
+by_cyl |> 
+  list_bind(cyl4, cyl6, what = "rows", name = "cyl4_and_6")
+```
+
+As the `list_bind` function wraps calls to `rbind` and `cbind` it will
+have the same effect on names as calling those two functions directly. 
+
+Finally, there is also `list_join_df` allowing to form a single element 
+out of many by joining data on an index.
+
+
+## Flattening
+Finally, there is `list_flatten` which takes in a list with nested list and
+flattens it. 
+The depth of the flattening process can be specified, by default all items
+are moved to one level.
+
+```{r}
+foo <- list(
+  1,
+  list(1, 2, 3, 
+       list(4, 5, 6),
+       list(7, 8, 9, 
+            list(10, 11, 
+                 list(12))),
+       13, 14),
+  15
+)
+
+foo |> list_flatten()
+```
+
+```{r}
+foo |> list_flatten(max_depth = 1)
+```
+
+
