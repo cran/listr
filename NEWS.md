@@ -1,3 +1,10 @@
+# Version 0.1 (2022-10-06)
+
+* Added `list_sort()`
+* Added `list_filter()`
+* Some fixes and improvements in the documentation
+
+
 # Version 0.0.2 (2022-04-21)
 * Added `list_bind_all()`, providing a short-cut for the pattern
 ```R

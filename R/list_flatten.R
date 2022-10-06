@@ -22,7 +22,7 @@ list_flatten <- function(in_list, max_depth = -1) {
     }
 
     sub_list <- is_sublist(in_list)
-    if (!any(sub_list) | max_depth == 0) {
+    if (!any(sub_list) || max_depth == 0) {
         return(in_list)
     }
 

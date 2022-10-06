@@ -8,7 +8,7 @@
 #' @noRd
 #' @keywords internal
 selection <- function(in_list, ..., enumerate = FALSE) {
-    if (is.null(names(in_list)) & enumerate) {
+    if (is.null(names(in_list)) && enumerate) {
         names(in_list) <- as.character(seq_len(length(in_list)))
     }
 

@@ -19,7 +19,7 @@ Boolean value.
 This is a convenience function to check whether all elements
 of a list have the same class. It will only return TRUE if all elements
 in a list are of the exact same class. This means that if a list has
-two vectors it TRUE will only be returned if they have the same mode or in
+two vectors TRUE will only be returned if they have the same mode or in
 case list has elements of compatible classes like data.frame and tbl.df
 the result will be false.
 

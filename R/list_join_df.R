@@ -31,7 +31,7 @@ list_join_df <- function(in_list, join_type = "inner", by = NULL,
                          skip_non_df = FALSE) {
     is_df <- sapply(in_list, inherits, "data.frame")
 
-    if (!skip_non_df & !all(is_df)) {
+    if (!skip_non_df && !all(is_df)) {
         stop("Some elements in the list are not data frames. Consider using
              skip_non_df = TRUE.")
     } else {
